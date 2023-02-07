@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.student.Student;
 
-
+@RestController
 @SpringBootApplication
 
 
