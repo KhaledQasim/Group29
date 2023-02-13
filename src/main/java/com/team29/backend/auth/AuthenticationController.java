@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.team29.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,8 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthenticationController {
 
     private final AuthenticationService service;
-    private final UserRepository repository;
-
+    
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
         @RequestBody RegisterRequest request
