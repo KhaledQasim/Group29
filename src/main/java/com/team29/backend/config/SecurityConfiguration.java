@@ -31,7 +31,7 @@ public class SecurityConfiguration {
                     .csrf()
                     .disable()
                     .authorizeHttpRequests()
-                    .requestMatchers("/auth/**") //any route requests in this list will not need authentication token
+                    .requestMatchers("/auth/**","/product**","/product/**") //any route requests in this list will not need authentication token
                     .permitAll()
                     .anyRequest()
                     .authenticated()
