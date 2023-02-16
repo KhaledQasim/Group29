@@ -26,7 +26,7 @@ public class SecurityConfiguration {
     private final AuthenticationProvider authenticationProvider;
     
 
-    //any urls in this list will not need authentication token
+    
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
@@ -34,7 +34,7 @@ public class SecurityConfiguration {
                     .csrf()
                     .disable()
                     .authorizeHttpRequests()
-                    .requestMatchers( "/auth/**","/product**/**").permitAll()
+                    .requestMatchers( "/auth/**","/product**/**").permitAll() //any urls in this list will not need authentication token
                     //.requestMatchers(HttpMethod.POST, "/auth/**","/product**/**").permitAll()
                     //.requestMatchers("/products").hasAuthority("ADMIN") //any urls in here can be only reached with a ADMIN role account.
                     // .requestMatchers("/product**").hasRole("ADMIN")                                          
