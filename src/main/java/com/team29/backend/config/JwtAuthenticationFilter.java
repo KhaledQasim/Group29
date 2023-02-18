@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){  //if we have the userEmail and they are not authenticated
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);  //then we get the user details from the database
             if (jwtService.isTokenValid(jwt, userDetails)){  //checks if the user is valid or not , if the user is valid it will create an object of type Username and password authentication token
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities() ); //null as at this point the user does not have stored credentials in our dataBase
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities() ); //userDetails is null as at this point the user does not have stored credentials in our dataBase
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); //extends the created authToken with the details of our request
                 SecurityContextHolder.getContext().setAuthentication(authToken); //updates the authentication token
             }
