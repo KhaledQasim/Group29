@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -44,6 +45,8 @@ public class User implements UserDetails {
         return List.of(new SimpleGrantedAuthority(role.name()));
         
     }
+
+ 
     @Override
     public String getUsername() {
         return email;
