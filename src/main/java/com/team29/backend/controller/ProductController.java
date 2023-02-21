@@ -17,7 +17,8 @@ import com.team29.backend.model.Product;
 import com.team29.backend.repository.ProductRepository;
 
 @RestController
-@CrossOrigin("http://localhost:3000/")
+// TO DO , place exact url of frontend server when ready to deploy
+@CrossOrigin(origins = {"http://localhost:3000/", "http://localhost:8080"}, allowCredentials = "true")
 public class ProductController {
     @Autowired
     private ProductRepository productRepository;
