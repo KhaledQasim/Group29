@@ -50,20 +50,8 @@ public class AuthenticationService {
 
   }
 
-  public AuthenticationResponse authenticate(AuthenticationRequest request) {
-    authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(
-            request.getEmail(),
-            request.getPassword()
-        )
-    );
-    var user = repository.findByEmail(request.getEmail())
-        .orElseThrow();
-    var jwtToken = jwtService.generateToken(user);
-    return AuthenticationResponse.builder()
-        .token(jwtToken)
-        .build();
-  }
+  
+ 
 
   public AuthenticationResponse login(AuthenticationRequest request) {
     authenticationManager.authenticate(
@@ -79,6 +67,8 @@ public class AuthenticationService {
         .token(jwtToken)
         .build();
   }
+
+
 
 
 
