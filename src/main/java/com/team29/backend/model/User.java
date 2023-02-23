@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity 
 // The 'Table' below is used to name the table that will be created in the DB, which this classes variables.
-@Table(name = "User")
+@Table(name = "user")
 public class User implements UserDetails {
 
     @Id
@@ -33,7 +33,6 @@ public class User implements UserDetails {
     private Long id;
     private String firstname;
     private String lastname;
-    private String username;
     private String email;
     private String password;
 

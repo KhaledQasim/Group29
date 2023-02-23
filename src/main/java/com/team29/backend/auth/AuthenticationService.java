@@ -37,13 +37,12 @@ public class AuthenticationService {
         throw new UsernameTakenException();
     }
     
-    if((StringUtils.isBlank(request.getFirstname())) || (StringUtils.isBlank(request.getLastname())) || (StringUtils.isBlank(request.getPassword())) || (StringUtils.isBlank(request.getUsername())) || (StringUtils.isBlank(request.getEmail()))){
+    if((StringUtils.isBlank(request.getFirstname())) || (StringUtils.isBlank(request.getLastname())) || (StringUtils.isBlank(request.getPassword())) || (StringUtils.isBlank(request.getEmail()))){
         throw new UserRegistrationDetailsMissingException();
     }
     var user = User.builder()
         .firstname(request.getFirstname())
         .lastname(request.getLastname())
-        .username(request.getUsername())
         .email(request.getEmail())
         .password(passwordEncoder.encode(request.getPassword()))
         .role(Role.USER)

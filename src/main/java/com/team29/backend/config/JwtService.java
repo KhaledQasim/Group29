@@ -41,7 +41,7 @@ public class JwtService {
         Map<String, Object> extraClaims,
         UserDetails userDetails
     ) {
-        
+        // 1000 * 60 * 60 * 24
       return Jwts
           .builder()
           .setClaims(extraClaims)
