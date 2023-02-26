@@ -1,12 +1,15 @@
 package com.team29.backend.config;
 
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.team29.backend.model.Cart;
-import com.team29.backend.exception.CartNotFoundException;
+
 import com.team29.backend.exception.CartAlreadyExistsException;
+import com.team29.backend.exception.CartNotFoundException;
+import com.team29.backend.model.Cart;
+import com.team29.backend.model.Product;
 import com.team29.backend.repository.CartRepository;
 
 @Service
@@ -52,5 +55,44 @@ public class CartService {
             throw new CartNotFoundException(id);
         }
         cartRepository.deleteById(id);
+    }
+
+
+    public void addProduct(Long cartId, Product productToAdd) throws CartNotFoundException {
+        Optional<Cart> cart = cartRepository.findById(cartId);
+        if (!cart.isPresent()) {
+            throw new CartNotFoundException(cartId);
+        }
+        Cart existingCart = cart.get();
+        existingCart.getProducts().add(productToAdd);
+        cartRepository.save(existingCart);
+    }
+
+    public void removeProduct(Long cartId, Product productToRemove) throws CartNotFoundException {
+        Optional<Cart> cart = cartRepository.findById(cartId);
+        if (!cart.isPresent()) {
+            throw new CartNotFoundException(cartId);
+        }
+        Cart existingCart = cart.get();
+        existingCart.getProducts().remove(productToRemove);
+        cartRepository.save(existingCart);
+    }
+
+    public int getProductCount(Long cartId) throws CartNotFoundException {
+        Optional<Cart> cart = cartRepository.findById(cartId);
+        if (!cart.isPresent()) {
+            throw new CartNotFoundException(cartId);
+        }
+        Cart existingCart = cart.get();
+        return existingCart.getProducts().size();
+    }
+
+    public int getTotalPrice(Long cartId) throws CartNotFoundException {
+        Optional<Cart> cart = cartRepository.findById(cartId);
+        if (!cart.isPresent()) {
+            throw new CartNotFoundException(cartId);
+        }
+        Cart existingCart = cart.get();
+        return existingCart.getProducts().stream().mapToInt(Product::getPrice).sum();
     }
 }

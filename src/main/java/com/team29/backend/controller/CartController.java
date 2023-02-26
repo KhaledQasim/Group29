@@ -10,6 +10,7 @@ import com.team29.backend.model.Cart;
 import com.team29.backend.config.CartService;
 import com.team29.backend.exception.CartNotFoundException;
 import com.team29.backend.exception.CartAlreadyExistsException;
+import com.team29.backend.model.Product;
 
 @RestController
 @RequestMapping("/api/carts")
@@ -54,4 +55,29 @@ public class CartController {
         cartService.deleteCart(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PostMapping("/cart/{cartId}/products")
+    public ResponseEntity<Void> addProduct(@PathVariable Long cartId, @RequestBody Product productToAdd) throws CartNotFoundException {
+        cartService.addProduct(cartId, productToAdd);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/cart/{cartId}/products")
+    public ResponseEntity<Void> removeProduct(@PathVariable Long cartId, @RequestBody Product productToRemove) throws CartNotFoundException {
+        cartService.removeProduct(cartId, productToRemove);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/cart/{cartId}/product-count")
+    public ResponseEntity<Integer> getProductCount(@PathVariable Long cartId) throws CartNotFoundException {
+        int count = cartService.getProductCount(cartId);
+        return new ResponseEntity<>(count, HttpStatus.OK);
+    }
+
+    @GetMapping("/cart/{cartId}/total-price")
+    public ResponseEntity<Integer> getTotalPrice(@PathVariable Long cartId) throws CartNotFoundException {
+        int totalPrice = cartService.getTotalPrice(cartId);
+        return new ResponseEntity<>(totalPrice, HttpStatus.OK);
+    }
+
 }

@@ -1,8 +1,7 @@
 package com.team29.backend.model;
 
 import java.util.Date;
-
-import org.hibernate.annotations.ManyToAny;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,6 +10,8 @@ import jakarta.persistence.TemporalType;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.ManyToMany;
+
 
 
 
@@ -35,7 +36,6 @@ public class Cart {
 
     private String name;
 
-    private Integer price;
 
     private String image;
 
@@ -46,6 +46,8 @@ public class Cart {
     private Date updatedAt;
 
     private int quantity;
+    @ManyToMany
+    private List<Product> products;
 
     @PrePersist
     protected void onCreate() {
@@ -57,4 +59,25 @@ public class Cart {
     protected void onUpdate() {
         updatedAt = new Date();
     }
+
+    public void addProduct(Product product) {
+        products.add(product);
+    }
+
+    public void removeProduct(Product product) {
+        products.remove(product);
+    }
+
+    public int getProductCount() {
+        return products.size();
+    }
+
+    public double getTotalPrice() {
+        double totalPrice = 0;
+        for (Product product : products) {
+            totalPrice += product.getPrice();
+        }
+        return totalPrice;
+    }
+
 }
