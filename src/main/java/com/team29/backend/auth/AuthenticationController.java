@@ -1,11 +1,15 @@
 package com.team29.backend.auth;
 
+import com.team29.backend.exception.UserRegistrationDetailsMissingException;
+import com.team29.backend.exception.UserRegistrationDetailsMissingException;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,11 +24,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.team29.backend.config.JwtService;
-import com.team29.backend.exception.UserRegistrationDetailsMissingException;
+import com.team29.backend.exception.UserEmailWrongException;
+import com.team29.backend.exception.UserRegistrationDetailsMissingAdvice;
 import com.team29.backend.exception.UsernameTakenException;
+import com.team29.backend.exception.WrongPassE;
+
 import com.team29.backend.model.Role;
 import com.team29.backend.model.User;
 
@@ -37,7 +46,7 @@ import com.team29.backend.repository.UserRepository;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000/", "http://localhost:8080"}, allowCredentials = "true")
+@CrossOrigin(origins = { "http://localhost:3000/", "http://localhost:8080" }, allowCredentials = "true")
 public class AuthenticationController {
     private final UserRepository repository;
     private final AuthenticationService service;
@@ -48,34 +57,48 @@ public class AuthenticationController {
     @Value("${cookies.domain}")
     private String domain;
 
-
     // @PostMapping("/register")
     // public ResponseEntity<AuthenticationResponse> register(
     //     @RequestBody RegisterRequest request
     // ){
     //     return ResponseEntity.ok(service.register(request));
     // }
-    
+    public static boolean patternMatches(String emailAddress, String regexPattern) {
+        return Pattern.compile(regexPattern)
+                .matcher(emailAddress)
+                .matches();
+    }
+    @ResponseBody
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         Optional<User> EmailTaken = repository.findByEmail(request.getEmail());
-        if (EmailTaken.isPresent()){
+        String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@" 
+        + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+        if ((StringUtils.isBlank(request.getFirstname())) || (StringUtils.isBlank(request.getLastname()))
+                || (StringUtils.isBlank(request.getPassword())) || (StringUtils.isBlank(request.getEmail()))) {
+
+            throw new UserRegistrationDetailsMissingException();
+        }
+
+        if (EmailTaken.isPresent()) {
             throw new UsernameTakenException();
         }
-        
-        if((StringUtils.isBlank(request.getFirstname())) || (StringUtils.isBlank(request.getLastname())) || (StringUtils.isBlank(request.getPassword())) || (StringUtils.isBlank(request.getEmail()))){
-            throw new UserRegistrationDetailsMissingException();
+
+        if (request.getPassword().length() <= 7) {
+            throw new WrongPassE();
+        }
+        if (!patternMatches(request.getEmail(), regexPattern)) {
+            throw new UserEmailWrongException();
         }
         try {
 
-
-            var user =  User.builder()
-                        .firstname(request.getFirstname())
-                        .lastname(request.getLastname())
-                        .email(request.getEmail())
-                        .password(passwordEncoder.encode(request.getPassword()))
-                        .role(Role.USER)
-                        .build();
+            var user = User.builder()
+                    .firstname(request.getFirstname())
+                    .lastname(request.getLastname())
+                    .email(request.getEmail())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .role(Role.USER)
+                    .build();
             repository.save(user);
             // String token = jwt.generateToken(user)
             // return ResponseEntity.ok()
@@ -97,7 +120,7 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
-    
+
     @GetMapping("/validate")
     public ResponseEntity<?> validateToken(@CookieValue(name = "jwt") String token,
             @AuthenticationPrincipal User user) {
@@ -107,10 +130,10 @@ public class AuthenticationController {
         } catch (ExpiredJwtException e) {
             return ResponseEntity.ok(false);
         }
-    } 
-    
+    }
+
     @GetMapping("/logout")
-    public ResponseEntity<?> logout () {
+    public ResponseEntity<?> logout() {
         ResponseCookie cookie = ResponseCookie.from("jwt", "")
                 .domain(domain)
                 .path("/")
@@ -119,23 +142,18 @@ public class AuthenticationController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString()).body("ok");
     }
-    
-    
 
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody AuthenticationRequest request) {
         try {
             authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    request.getEmail(),
-                    request.getPassword()
-                )
-            );
-
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()));
 
             var user = repository.findByEmail(request.getEmail())
                     .orElseThrow();
-         
+
             String token = jwt.generateToken(user);
             ResponseCookie cookie = ResponseCookie.from("jwt", token)
                     .domain(domain)
@@ -149,6 +167,5 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
-    
 
 }
