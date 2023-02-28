@@ -12,18 +12,11 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.ManyToMany;
 
-
-
-
-
-
-
-
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -32,10 +25,7 @@ import lombok.NoArgsConstructor;
 public class Cart {
     @Id
     @GeneratedValue
-    private Long id;
-
-    private String name;
-
+    private Long cartid;
 
     private String image;
 
@@ -46,6 +36,7 @@ public class Cart {
     private Date updatedAt;
 
     private int quantity;
+
     @ManyToMany
     private List<Product> products;
 
@@ -64,8 +55,13 @@ public class Cart {
         products.add(product);
     }
 
-    public void removeProduct(Product product) {
-        products.remove(product);
+    public void removeProduct(Long productId) {
+        for (int i = 0; i < products.size(); i++) {
+            if (products.get(i).getId().equals(productId)) {
+                products.remove(i);
+                break;
+            }
+        }
     }
 
     public int getProductCount() {
@@ -79,5 +75,4 @@ public class Cart {
         }
         return totalPrice;
     }
-
 }
