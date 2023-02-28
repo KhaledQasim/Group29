@@ -13,7 +13,7 @@ import com.team29.backend.exception.CartAlreadyExistsException;
 import com.team29.backend.model.Product;
 
 @RestController
-@RequestMapping("/api/carts")
+@RequestMapping("/carts")
 @CrossOrigin(origins = {"http://localhost:3000/", "http://localhost:8080"}, allowCredentials = "true")
 public class CartController {
     
@@ -23,13 +23,13 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    @PostMapping("/cart")
+    @PostMapping("/carts/add")
     public ResponseEntity<Cart> createCart(@RequestBody Cart newCart) throws CartAlreadyExistsException {
         Cart cart = cartService.createCart(newCart);
         return new ResponseEntity<>(cart, HttpStatus.CREATED);
     }
 
-    @GetMapping("/carts")
+    @GetMapping("/carts/get")
     public ResponseEntity<List<Cart>> getAllCarts() {
         List<Cart> carts = cartService.getAllCarts();
         return new ResponseEntity<>(carts, HttpStatus.OK);
@@ -56,13 +56,13 @@ public class CartController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/cart/{cartId}/products")
+    @PostMapping("/cart/{cartId}/addproducts")
     public ResponseEntity<Void> addProduct(@PathVariable Long cartId, @RequestBody Product productToAdd) throws CartNotFoundException {
         cartService.addProduct(cartId, productToAdd);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/cart/{cartId}/products")
+    @DeleteMapping("/cart/{cartId}/reomveproducts")
     public ResponseEntity<Void> removeProduct(@PathVariable Long cartId, @RequestBody Product productToRemove) throws CartNotFoundException {
         cartService.removeProduct(cartId, productToRemove);
         return new ResponseEntity<>(HttpStatus.OK);
