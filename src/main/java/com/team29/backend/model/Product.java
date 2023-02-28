@@ -1,6 +1,8 @@
 package com.team29.backend.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -19,7 +21,7 @@ public class Product {
     private String name;
     private Integer price;
     private String image;
-
-
+    @Enumerated(EnumType.STRING)
+    private Size size;
     
 }
