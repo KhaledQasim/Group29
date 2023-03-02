@@ -33,13 +33,14 @@ import com.team29.backend.exception.UserEmailWrongException;
 import com.team29.backend.exception.UserRegistrationDetailsMissingAdvice;
 import com.team29.backend.exception.UsernameTakenException;
 import com.team29.backend.exception.WrongPassE;
-
+import com.team29.backend.ip.RequestService;
 import com.team29.backend.model.Role;
 import com.team29.backend.model.User;
 
 import ch.qos.logback.core.util.Duration;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.micrometer.common.util.StringUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import com.team29.backend.repository.UserRepository;
 
@@ -57,6 +58,9 @@ public class AuthenticationController {
     @Value("${cookies.domain}")
     private String domain;
 
+    @Autowired
+    private RequestService requestService;
+
     // @PostMapping("/register")
     // public ResponseEntity<AuthenticationResponse> register(
     //     @RequestBody RegisterRequest request
@@ -70,7 +74,7 @@ public class AuthenticationController {
     }
     @ResponseBody
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> register(HttpServletRequest requestIp, @RequestBody RegisterRequest request) {
         Optional<User> EmailTaken = repository.findByEmail(request.getEmail());
         String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@" 
         + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
@@ -98,6 +102,7 @@ public class AuthenticationController {
                     .email(request.getEmail())
                     .password(passwordEncoder.encode(request.getPassword()))
                     .role(Role.USER)
+                    .ip(requestService.getClientIp(requestIp))
                     .build();
             repository.save(user);
             // String token = jwt.generateToken(user)
