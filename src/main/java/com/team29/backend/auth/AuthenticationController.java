@@ -43,11 +43,10 @@ import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import com.team29.backend.repository.UserRepository;
-
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth")
-@RequiredArgsConstructor
-@CrossOrigin(origins = { "http://localhost:3000/", "http://localhost:8080/" }, allowCredentials = "true")
+@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:8080" }, allowCredentials = "true")
 public class AuthenticationController {
     private final UserRepository repository;
     private final AuthenticationService service;
