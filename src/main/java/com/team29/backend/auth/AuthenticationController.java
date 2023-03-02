@@ -47,7 +47,7 @@ import com.team29.backend.repository.UserRepository;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = { "http://localhost:3000/", "http://localhost:8080" }, allowCredentials = "true")
+@CrossOrigin(origins = { "http://localhost:3000/", "http://localhost:8080/" }, allowCredentials = "true")
 public class AuthenticationController {
     private final UserRepository repository;
     private final AuthenticationService service;
@@ -74,7 +74,8 @@ public class AuthenticationController {
     }
     @ResponseBody
     @PostMapping("/register")
-    public ResponseEntity<?> register(HttpServletRequest requestIp, @RequestBody RegisterRequest request) {
+    // HttpServletRequest requestIp,
+    public ResponseEntity<?> register( HttpServletRequest requestIp, @RequestBody RegisterRequest request) {
         Optional<User> EmailTaken = repository.findByEmail(request.getEmail());
         String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@" 
         + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
