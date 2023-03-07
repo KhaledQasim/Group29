@@ -69,7 +69,7 @@ public class Cart {
     }
 
     public int getProductCount() {
-        return products.size();
+        return products.size() * quantity;
     }
 
     public double getPrice() {
@@ -85,7 +85,7 @@ public class Cart {
     }
     
     public void setTotalPrice(double totalPrice) {
-        this.totalPrice = totalPrice;
+        this.totalPrice = totalPrice * this.quantity;
     }
     
 }
