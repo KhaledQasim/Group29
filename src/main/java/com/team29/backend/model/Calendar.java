@@ -21,5 +21,8 @@ public class Calendar {
     @GeneratedValue
     private Long id;
     private String title;
-    private String date;   
+    private String date;
+    private String start;
+    private String end;
+    private Boolean allDay;   
 }

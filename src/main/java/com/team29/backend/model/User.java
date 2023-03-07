@@ -44,7 +44,7 @@ public class User implements UserDetails {
 
     @Column(updatable = false)
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    private Instant createdAt;
    
 
     @Enumerated(EnumType.STRING)

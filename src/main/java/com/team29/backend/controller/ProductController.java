@@ -26,7 +26,7 @@ public class ProductController {
     private ProductRepository productRepository;
     
     
-    @PostMapping("/product")
+    @PostMapping("api/product")
     Product newProduct(@RequestBody Product newProduct){
         return productRepository.save(newProduct);
     }
@@ -42,18 +42,32 @@ public class ProductController {
                 .orElseThrow(()->new ProductNotFoundException(id));
     }
 
-    @PutMapping("/product/{id}")
-    Product updateUser(@RequestBody Product newProduct,@PathVariable Long id){
+    @PutMapping("api/product/{id}")
+    Product updateProduct(@RequestBody Product newProduct, @PathVariable Long id) {
         return productRepository.findById(id)
                 .map(product -> {
                     product.setName(newProduct.getName());
                     product.setPrice(newProduct.getPrice());
                     product.setImage(newProduct.getImage());
+                    product.setImages(newProduct.getImages());
+                    product.setDescription(newProduct.getDescription());
+                    product.setCategory(newProduct.getCategory());
+                    product.setSize(newProduct.getSize());
+                    product.setQuantity(newProduct.getQuantity());
+                    return productRepository.save(product);
+                }).orElseThrow(() -> new ProductNotFoundException(id));
+    }
+    
+    @PutMapping("api/product-quantity/{id}")
+    Product updateProductQuantity(@RequestBody Product newProduct,@PathVariable Long id){
+        return productRepository.findById(id)
+                .map(product -> {
+                    product.setQuantity(newProduct.getQuantity());
                     return productRepository.save(product);
                 }).orElseThrow(()->new ProductNotFoundException(id));
     }
 
-    @DeleteMapping("/product/{id}")
+    @DeleteMapping("api/product/{id}")
     String deleteUser(@PathVariable Long id){
         if(!productRepository.existsById(id)){
             throw new ProductNotFoundException(id);

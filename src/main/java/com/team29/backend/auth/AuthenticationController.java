@@ -60,6 +60,7 @@ public class AuthenticationController {
     @Autowired
     private RequestService requestService;
 
+
     // @PostMapping("/register")
     // public ResponseEntity<AuthenticationResponse> register(
     //     @RequestBody RegisterRequest request
@@ -95,7 +96,7 @@ public class AuthenticationController {
             throw new UserEmailWrongException();
         }
         try {
-
+          
             var user = User.builder()
                     .firstname(request.getFirstname())
                     .lastname(request.getLastname())
