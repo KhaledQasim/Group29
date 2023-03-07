@@ -37,8 +37,12 @@ public class Cart {
 
     private int quantity;
 
+    private double totalPrice;
+
     @ManyToMany
     private List<Product> products;
+
+
 
     @PrePersist
     protected void onCreate() {
@@ -68,11 +72,20 @@ public class Cart {
         return products.size();
     }
 
-    public double getTotalPrice() {
-        double totalPrice = 0;
+    public double getPrice() {
+             totalPrice = 0;
         for (Product product : products) {
             totalPrice += product.getPrice();
         }
         return totalPrice;
     }
+   
+    public void setProductCount(int count) {
+        this.quantity = count;
+    }
+    
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+    
 }
