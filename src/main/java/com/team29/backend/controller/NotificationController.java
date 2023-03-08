@@ -39,7 +39,7 @@ public class NotificationController {
     ArrayList<Product> getNoStock() {
         ArrayList<Product> NoStock = new ArrayList<>();
         for (Product temp : productRepository.findAll()) {
-            if (temp.getQuantity() == 0) {
+            if (temp.getQuantity() <= 0) {
                 NoStock.add(temp);
             }
         }

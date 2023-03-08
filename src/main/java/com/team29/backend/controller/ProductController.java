@@ -26,7 +26,7 @@ public class ProductController {
     private ProductRepository productRepository;
     
     
-    @PostMapping("api/product")
+    @PostMapping("/api/product")
     Product newProduct(@RequestBody Product newProduct){
         return productRepository.save(newProduct);
     }
@@ -42,7 +42,7 @@ public class ProductController {
                 .orElseThrow(()->new ProductNotFoundException(id));
     }
 
-    @PutMapping("api/product/{id}")
+    @PutMapping("/api/product/{id}")
     Product updateProduct(@RequestBody Product newProduct, @PathVariable Long id) {
         return productRepository.findById(id)
                 .map(product -> {
@@ -58,14 +58,7 @@ public class ProductController {
                 }).orElseThrow(() -> new ProductNotFoundException(id));
     }
     
-    @PutMapping("api/product-quantity/{id}")
-    Product updateProductQuantity(@RequestBody Product newProduct,@PathVariable Long id){
-        return productRepository.findById(id)
-                .map(product -> {
-                    product.setQuantity(newProduct.getQuantity());
-                    return productRepository.save(product);
-                }).orElseThrow(()->new ProductNotFoundException(id));
-    }
+  
 
     @DeleteMapping("api/product/{id}")
     String deleteUser(@PathVariable Long id){
