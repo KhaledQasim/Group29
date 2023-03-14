@@ -1,8 +1,13 @@
 package com.team29.backend.model;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,6 +40,12 @@ public class User implements UserDetails {
     private String lastname;
     private String email;
     private String password;
+    private String ip;
+
+    @Column(updatable = false)
+    @CreationTimestamp
+    private Instant createdAt;
+   
 
     @Enumerated(EnumType.STRING)
     private Role role;
