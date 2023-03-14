@@ -21,7 +21,7 @@ public class Product {
     @GeneratedValue
     private Long id;
     private String name;
-    private Integer price;
+    private double price;
     private String image;
     private String description;
     private Long quantity;
