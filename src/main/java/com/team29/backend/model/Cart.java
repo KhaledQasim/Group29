@@ -27,8 +27,6 @@ public class Cart {
     @GeneratedValue
     private Long cartid;
 
-    private String image;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
@@ -42,8 +40,6 @@ public class Cart {
     @ManyToMany
     private List<Product> products;
 
-
-
     @PrePersist
     protected void onCreate() {
         createdAt = new Date();
@@ -56,7 +52,17 @@ public class Cart {
     }
 
     public void addProduct(Product product) {
-        products.add(product);
+        boolean found = false;
+        for (Product p : products) {
+            if (p.getId().equals(product.getId())) {
+                p.setQuantity(p.getQuantity() + product.getQuantity());
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            products.add(product);
+        }
     }
 
     public void removeProduct(Long productId) {
@@ -69,23 +75,39 @@ public class Cart {
     }
 
     public int getProductCount() {
-        return products.size() * quantity;
+        int count = 0;
+        for (Product product : products) {
+            count += product.getQuantity();
+        }
+        return count * quantity;
     }
 
     public double getPrice() {
-             totalPrice = 0;
         for (Product product : products) {
-            totalPrice += product.getPrice();
+            totalPrice += product.getPrice() * product.getQuantity() * quantity;
         }
         return totalPrice;
     }
    
     public void setProductCount(int count) {
+        int currentCount = getProductCount() / quantity;
+        if (currentCount > 0) {
+            double factor = (double) count / currentCount;
+            for (Product product : products) {
+                product.setQuantity((long) (product.getQuantity() * factor));
+            }
+        }
         this.quantity = count;
     }
     
     public void setTotalPrice(double totalPrice) {
+        double currentPrice = getPrice();
+        if (currentPrice > 0) {
+            double factor = totalPrice / currentPrice;
+            for (Product product : products) {
+                product.setPrice(product.getPrice() * factor);
+            }
+        }
         this.totalPrice = totalPrice * this.quantity;
     }
-    
 }
