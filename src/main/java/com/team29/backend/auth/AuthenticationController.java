@@ -88,8 +88,8 @@ public class AuthenticationController {
         if (EmailTaken.isPresent()) {
             throw new UsernameTakenException();
         }
-
-        if (request.getPassword().length() <= 7) {
+        String regexPatternPassword = "(?=\\S+$).{8,}";
+        if (!patternMatches(request.getPassword(), regexPatternPassword)) {
             throw new WrongPassE();
         }
         if (!patternMatches(request.getEmail(), regexPattern)) {
