@@ -9,9 +9,6 @@ import com.team29.backend.model.Cart;
 import com.team29.backend.model.Product;
 import com.team29.backend.repository.CartRepository;
 import com.team29.backend.repository.ProductRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 @Service
 public class CartService {
     
@@ -22,11 +19,9 @@ public class CartService {
         this.cartRepository = cartRepository;
         this.productRepository = productRepository;
     }
-
-    public Page<Cart> getAllCarts(Pageable pageable) {
-        return cartRepository.findAll(pageable);
+    public List<Cart> getAllCarts() {
+        return cartRepository.findAll();
     }
-
     public Optional<Cart> getCartById(Long id) throws CartNotFoundException {
         Optional<Cart> cart = cartRepository.findById(id);
         if (!cart.isPresent()) {
@@ -34,20 +29,17 @@ public class CartService {
         }
         return cart;
     }
-
     public Cart createCart(Cart newCart) throws CartAlreadyExistsException {
         return cartRepository.save(newCart);
     }
-
     public Cart updateCart(Long id, Cart updatedCart) throws CartNotFoundException {
         Optional<Cart> cart = cartRepository.findById(id);
         if (!cart.isPresent()) {
             throw new CartNotFoundException(id);
         }
-        updatedCart.setCartid(id);
+        updatedCart.setId(id);
         return cartRepository.save(updatedCart);
     }
-
     public void deleteCart(Long id) throws CartNotFoundException {
         Optional<Cart> cart = cartRepository.findById(id);
         if (!cart.isPresent()) {
@@ -55,60 +47,88 @@ public class CartService {
         }
         cartRepository.deleteById(id);
     }
-
-    public void addProduct(Long cartId, Long productId) throws CartNotFoundException, ProductNotFoundException {
-        Optional<Cart> cart = cartRepository.findById(cartId);
-        if (!cart.isPresent()) {
+    public void addProduct(Long cartId, Long productId, int quantity) throws CartNotFoundException, ProductNotFoundException {
+        Optional<Cart> optionalCart = cartRepository.findById(cartId);
+        if (optionalCart.isEmpty()) {
             throw new CartNotFoundException(cartId);
         }
-        Cart existingCart = cart.get();
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException(productId));
-        existingCart.getProducts().add(product);
-        existingCart.setProductCount(existingCart.getProductCount() + 1);
-        existingCart.setTotalPrice(existingCart.getTotalPrice() + product.getPrice());
-        cartRepository.save(existingCart);
+        Cart cart = optionalCart.get();
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+        if (optionalProduct.isEmpty()) {
+            throw new ProductNotFoundException(productId);
+        }
+        Product product = optionalProduct.get();
+        // set the product's cart to the current cart
+        product.setCart(cart);
+        // add the product (with the given quantity) to the cart's list of products
+        for (int i = 0; i < quantity; i++) {
+            cart.getProducts().add(product);
+        }
+        cart.setProductCount(cart.getProductCount() + quantity);
+        cart.setTotalPrice(cart.getTotalPrice() + (product.getPrice() * quantity));
+        cartRepository.save(cart);
     }
-    private double getProductPrice(Long productId) throws ProductNotFoundException {
-        Product product = productRepository.findById(productId)
-                    .orElseThrow(() -> new ProductNotFoundException(productId));
-        return product.getPrice();
-    }
-
-    public void removeProduct(Long cartId, Long productId) throws CartNotFoundException, ProductNotFoundException {
+    public void removeProduct(Long cartId, Long productId, int quantity) throws CartNotFoundException, ProductNotFoundException {
         Optional<Cart> cart = cartRepository.findById(cartId);
         if (!cart.isPresent()) {
             throw new CartNotFoundException(cartId);
         }
         Cart existingCart = cart.get();
         List<Product> products = existingCart.getProducts();
-        boolean productRemoved = products.removeIf(product -> product.getId().equals(productId));
-        if (!productRemoved) {
+        Optional<Product> optionalProduct = products.stream().filter(product -> product.getId().equals(productId)).findFirst();
+        if (optionalProduct.isEmpty()) {
             throw new ProductNotFoundException(productId);
         }
-        existingCart.setProductCount(existingCart.getProductCount() - 1);
-        existingCart.setTotalPrice(existingCart.getTotalPrice() - getProductPrice(productId));
+        Product product = optionalProduct.get();
+        if (product.getQuantity() < quantity) {
+            throw new IllegalArgumentException("Quantity to remove exceeds product quantity in cart");
+        }
+        if (product.getQuantity() < quantity) {
+            products.remove(product);
+        } else {
+            product.setQuantity(product.getQuantity() - quantity);
+        }
+        existingCart.setProductCount(existingCart.getProductCount() - quantity);
+        existingCart.setTotalPrice(existingCart.getTotalPrice() - (product.getPrice() * quantity));
         cartRepository.save(existingCart);
     }
-
+    public double getProductPrice(Long productId) throws ProductNotFoundException {
+        Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new ProductNotFoundException(productId));
+        return product.getPrice();
+    }
     public int getProductCount(Long cartId) throws CartNotFoundException {
         Optional<Cart> cart = cartRepository.findById(cartId);
         if (!cart.isPresent()) {
             throw new CartNotFoundException(cartId);
         }
         Cart existingCart = cart.get();
-        return existingCart.getProductCount();
+        return existingCart.getProducts().stream().mapToInt(Product::getQuantity).sum();
     }
-
+    public int getProductQuantity(Long cartId, Long productId) throws CartNotFoundException, ProductNotFoundException {
+        Optional<Cart> optionalCart = cartRepository.findById(cartId);
+        if (optionalCart.isEmpty()) {
+            throw new CartNotFoundException(cartId);
+        }
+        Cart cart = optionalCart.get();
+        Optional<Product> optionalProduct = cart.getProducts().stream()
+                                              .filter(p -> p.getId().equals(productId))
+                                              .findFirst();
+        if (optionalProduct.isEmpty()) {
+            throw new ProductNotFoundException(productId);
+        }
+        return optionalProduct.get().getQuantity();
+    }
     public double getTotalPrice(Long cartId) throws CartNotFoundException {
         Optional<Cart> cart = cartRepository.findById(cartId);
         if (!cart.isPresent()) {
             throw new CartNotFoundException(cartId);
         }
         Cart existingCart = cart.get();
-        return existingCart.getTotalPrice();
+        return existingCart.getProducts().stream()
+                        .mapToDouble(p -> p.getQuantity() * p.getPrice())
+                        .sum();
     }
-
     public List<Product> getProductsInCart(Long cartId) throws CartNotFoundException {
         Optional<Cart> cart = cartRepository.findById(cartId);
         if (!cart.isPresent()) {
@@ -123,12 +143,37 @@ public class CartService {
             throw new CartNotFoundException(cartId);
         }
         Cart existingCart = cart.get();
-        List<Product> products = existingCart.getProducts();
-        for (Product product : products) {
-            if (product.getId().equals(productId)) {
-                return true;
-            }
+        return existingCart.getProducts().stream()
+                        .anyMatch(p -> p.getId().equals(productId));
+    }
+    public void updateProductQuantity(Long cartId, Long productId, int quantity) throws CartNotFoundException, ProductNotFoundException {
+        Optional<Cart> optionalCart = cartRepository.findById(cartId);
+        if (optionalCart.isEmpty()) {
+            throw new CartNotFoundException(cartId);
         }
-        return false;
+        Cart cart = optionalCart.get();
+        Optional<Product> optionalProduct = cart.getProducts().stream()
+                                              .filter(p -> p.getId().equals(productId))
+                                              .findFirst();
+        if (optionalProduct.isEmpty()) {
+            throw new ProductNotFoundException(productId);
+        }
+        Product product = optionalProduct.get();
+        int oldQuantity = product.getQuantity();
+        product.setQuantity(quantity);
+        cart.setProductCount(cart.getProductCount() + quantity - oldQuantity);
+        cart.setTotalPrice(cart.getTotalPrice() + (quantity - oldQuantity) * product.getPrice());
+        cartRepository.save(cart);
+    }
+    public void removeAllProducts(Long cartId) throws CartNotFoundException {
+        Optional<Cart> cart = cartRepository.findById(cartId);
+        if (!cart.isPresent()) {
+            throw new CartNotFoundException(cartId);
+        }
+        Cart existingCart = cart.get();
+        existingCart.getProducts().clear();
+        existingCart.setProductCount(0);
+        existingCart.setTotalPrice(0.0);
+        cartRepository.save(existingCart);
     }
 }
