@@ -11,6 +11,7 @@ import com.team29.backend.exception.ProductNotFoundException;
 import com.team29.backend.model.Cart;
 import com.team29.backend.config.CartService;
 import com.team29.backend.model.Product;
+import com.team29.backend.model.Size;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000/", "http://localhost:8080"}, allowCredentials = "true")
@@ -53,16 +54,19 @@ public class CartController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
-
     @PutMapping("/{cartId}")
-    public ResponseEntity<Cart> updateCart(@PathVariable("cartId") Long cartId, @RequestBody Cart updatedCart) {
+    public ResponseEntity<Cart> updateCart(@PathVariable("cartId") Long cartId, @RequestBody Cart cartData) {
         try {
+            Cart updatedCart = cartService.getCartById(cartId).orElseThrow(() -> new CartNotFoundException(cartId));
+            updatedCart.setProducts(cartData.getProducts());
+            updatedCart.setTotalPrice(cartData.getTotalPrice());
             Cart savedCart = cartService.updateCart(cartId, updatedCart);
             return new ResponseEntity<>(savedCart, HttpStatus.OK);
         } catch (CartNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    
 
     @DeleteMapping("/{cartId}")
     public ResponseEntity<Void> deleteCart(@PathVariable("cartId") Long cartId) {
@@ -74,25 +78,28 @@ public class CartController {
         }
     }
 
-    @PostMapping("/{cartId}/add-product")
-    public ResponseEntity<Void> addProductToCart(@PathVariable("cartId") Long cartId, @RequestParam("productId") Long productId, @RequestParam("quantity") int quantity) {
+    @PostMapping("/{cartId}/addproduct")
+    public ResponseEntity<Void> addProductToCart(@PathVariable("cartId") Long cartId, @RequestBody Product product) {
         try {
-            cartService.addProduct(cartId, productId, quantity);
+            cartService.addProduct(cartId, product);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (CartNotFoundException | ProductNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
     
-    @DeleteMapping("/{cartId}/delete-product/{productId}")
-    public ResponseEntity<Void> removeProductFromCart(@PathVariable("cartId") Long cartId, @PathVariable("productId") Long productId, @RequestParam("quantity") int quantity) {
-        try {
-            cartService.removeProduct(cartId, productId, quantity);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (CartNotFoundException | ProductNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
+
+    
+    @DeleteMapping("/{cartId}/deleteproduct/{productId}")
+    public ResponseEntity<Void> removeProductFromCart(@PathVariable("cartId") Long cartId, @PathVariable("productId") Long productId, @RequestBody int quantity) {
+try {
+cartService.removeProduct(cartId, productId, quantity);
+return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+} catch (CartNotFoundException | ProductNotFoundException e) {
+return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+}
+}
+
     
    @GetMapping("/{cartId}/products/count")
     public ResponseEntity<Integer> getProductCount(@PathVariable("cartId") Long cartId) {
@@ -103,7 +110,7 @@ public class CartController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    @GetMapping("/{cartId}/total-price")
+    @GetMapping("/{cartId}/totalprice")
     public ResponseEntity<Double> getTotalPrice(@PathVariable("cartId") Long cartId) {
         try {
             double totalPrice = cartService.getTotalPrice(cartId);
@@ -123,7 +130,7 @@ public class CartController {
         }
     }
 
-    @GetMapping("/{id}/products/{productId}")
+    @GetMapping("/{cartId}/products/{productId}")
     public ResponseEntity<Boolean> hasProductInCart(@PathVariable("cartId") Long cartId, @PathVariable("productId") Long productId) {
         try {
             boolean hasProduct = cartService.hasProductInCart(cartId, productId);
@@ -132,17 +139,7 @@ public class CartController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    @PutMapping("/{cartId}/products/{productId}/quantity")
-public ResponseEntity<Void> updateProductQuantityInCart(@PathVariable("cartId") Long cartId, @PathVariable("productId") Long productId, @RequestParam("quantity") int quantity) {
-    try {
-        cartService.updateProductQuantity(cartId, productId, quantity);
-        return new ResponseEntity<>(HttpStatus.OK);
-    } catch (CartNotFoundException|ProductNotFoundException e) {
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    } catch (IllegalArgumentException e) {
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-}
+    
 @DeleteMapping("/{cartId}/products")
 public ResponseEntity<Void> emptyCart(@PathVariable("cartId") Long cartId) {
     try {
@@ -152,13 +149,24 @@ public ResponseEntity<Void> emptyCart(@PathVariable("cartId") Long cartId) {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
-@GetMapping("/{cartId}/products/{productId}/quantity")
-public ResponseEntity<Integer> getProductQuantityInCart(@PathVariable("cartId") Long cartId, @PathVariable("productId") Long productId) {
+
+@GetMapping("/{cartId}/quantity")
+public ResponseEntity<Integer> getCartQuantity(@PathVariable("cartId") Long cartId) {
     try {
-        int quantity = cartService.getProductQuantity(cartId, productId);
-        return new ResponseEntity<>(quantity, HttpStatus.OK);
-    } catch (CartNotFoundException | ProductNotFoundException e) {
+        int quantity = cartService.getCartQuantity(cartId);
+        return ResponseEntity.ok(quantity);
+    } catch (CartNotFoundException e) {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+}
+
+@PutMapping("/{cartId}/quantity")
+public ResponseEntity<Integer> updateCartQuantity(@PathVariable("cartId") Long cartId, @RequestBody int quantity) {
+    try {
+        cartService.updateCartQuantity(cartId, quantity);
+        return ResponseEntity.ok().build();
+    } catch (CartNotFoundException e) {
+        return ResponseEntity.notFound().build();
     }
 }
 }

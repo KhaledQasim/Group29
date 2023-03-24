@@ -37,10 +37,11 @@ public class ProductController {
     }
 
     @GetMapping("/product/{id}")
-    Product geProductById(@PathVariable Long id){
+    Product getProductById(@PathVariable Long id){
         return productRepository.findById(id)
                 .orElseThrow(()->new ProductNotFoundException(id));
     }
+    
 
     @PutMapping("/api/product/{id}")
     Product updateProduct(@RequestBody Product newProduct, @PathVariable Long id) {
