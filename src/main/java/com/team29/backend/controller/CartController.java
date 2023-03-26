@@ -55,17 +55,20 @@ public class CartController {
         }
     }
     @PutMapping("/{cartId}")
-    public ResponseEntity<Cart> updateCart(@PathVariable("cartId") Long cartId, @RequestBody Cart cartData) {
+    public ResponseEntity<Cart> updateCart(@PathVariable("cartId") Long cartId, @RequestBody Cart cartData, 
+                                            @RequestParam("quantity") int quantity, @RequestParam("totalPrice") double totalPrice) {
         try {
             Cart updatedCart = cartService.getCartById(cartId).orElseThrow(() -> new CartNotFoundException(cartId));
             updatedCart.setProducts(cartData.getProducts());
-            updatedCart.setTotalPrice(cartData.getTotalPrice());
+            updatedCart.setQuantity(quantity);
+            updatedCart.setTotalPrice(totalPrice);
             Cart savedCart = cartService.updateCart(cartId, updatedCart);
             return new ResponseEntity<>(savedCart, HttpStatus.OK);
         } catch (CartNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    
     
 
     @DeleteMapping("/{cartId}")

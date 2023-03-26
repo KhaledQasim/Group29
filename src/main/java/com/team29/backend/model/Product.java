@@ -69,4 +69,5 @@ public class Product {
     public void setSize(Size size) {
         this.size = size;
     }
+    
 }

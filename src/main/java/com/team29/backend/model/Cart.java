@@ -82,9 +82,18 @@ public class Cart {
                 product.setPrice(product.getPrice() * factor);
             }
         }
-        this.totalPrice = totalPrice * this.quantity;
+        this.totalPrice = totalPrice;
     }
     
+    
+    
+    public int getQuantity() {
+        return quantity;
+    }
+    
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
     public Optional<Product> getProductById(Long productId) {
         return products.stream().filter(product -> product.getId().equals(productId)).findFirst();
     }
