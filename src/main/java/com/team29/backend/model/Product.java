@@ -1,6 +1,9 @@
 package com.team29.backend.model;
 
+import java.time.Instant;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -17,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDate;
 @Data
 @Builder
 @NoArgsConstructor
@@ -35,6 +39,9 @@ public class Product {
     private String category;
     @Enumerated(EnumType.STRING)
     private Size size;
+    @CreationTimestamp
+    private LocalDate createdAt;
+
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart")
