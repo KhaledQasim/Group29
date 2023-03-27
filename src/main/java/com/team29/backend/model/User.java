@@ -1,6 +1,7 @@
 package com.team29.backend.model;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
@@ -44,7 +45,7 @@ public class User implements UserDetails {
 
     @Column(updatable = false)
     @CreationTimestamp
-    private Instant createdAt;
+    private LocalDate createdAt;
    
 
     @Enumerated(EnumType.STRING)

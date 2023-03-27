@@ -1,5 +1,6 @@
 package com.team29.backend.controller;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +48,20 @@ public class ProductController {
             }
         }
         return Category;
+                
+    }
+
+    @GetMapping("/products/new")
+    ArrayList<Product> getProductNew(){
+        ArrayList<Product> New = new ArrayList<>();
+        LocalDate currentDate = LocalDate.now();
+        LocalDate currentDateMinus2Weeks = currentDate.minusDays(14);
+        for (Product temp : productRepository.findAll()) {
+            if (temp.getCreatedAt().isAfter(currentDateMinus2Weeks)){
+                New.add(temp);
+            }
+        }
+        return New;
                 
     }
 
