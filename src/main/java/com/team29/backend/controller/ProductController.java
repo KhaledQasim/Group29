@@ -1,5 +1,6 @@
 package com.team29.backend.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,19 @@ public class ProductController {
     @GetMapping("/products")
     List<Product> getAllProducts(){
         return productRepository.findAll();
+    }
+
+    @GetMapping("/productsCategory/{category}")
+    ArrayList<Product> getProductByCategory(@PathVariable String category){
+        ArrayList<Product> Category = new ArrayList<>();
+        for (Product temp : productRepository.findAll()) {
+            if (temp.getCategory().equals(category)) {
+                Category.add(temp);
+
+            }
+        }
+        return Category;
+                
     }
 
     @GetMapping("/product/{id}")
