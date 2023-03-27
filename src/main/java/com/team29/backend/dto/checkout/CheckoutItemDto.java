@@ -1,61 +1,61 @@
-// package com.team29.backend.dto.checkout;
+package com.team29.backend.dto.checkout;
 
-// public class CheckoutItemDto {
+public class CheckoutItemDto {
 
-//     private String name;
-//     private int quantity;
-//     private double price;
-//     private long productId;
-//     private int userId;
+    private String name;
+    private int quantity;
+    private double price;
+    private long productId;
+    private int userId;
 
 
-//     public CheckoutItemDto(){
+    public CheckoutItemDto(){
 
         
-//     }
-//     //getter and setters
+    }
+    //getter and setters
 
-//     public String getName() {
-//         return name;
-//     }
+    public String getName() {
+        return name;
+    }
 
-//     public void setName(String name) {
-//         this.name = name;
-//     }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-//     public int getQuantity() {
-//         return quantity;
-//     }
+    public int getQuantity() {
+        return quantity;
+    }
 
-//     public void setQuantity(int quantity) {
-//         this.quantity = quantity;
-//     }
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
-//     public double getPrice() {
-//         return price;
-//     }
+    public double getPrice() {
+        return price;
+    }
 
-//     public void setPrice(double price) {
-//         this.price = price;
-//     }
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
-//     public long getProductId() {
-//         return productId;
-//     }
+    public long getProductId() {
+        return productId;
+    }
 
-//     public void setProductId(long productId) {
-//         this.productId = productId;
-//     }
+    public void setProductId(long productId) {
+        this.productId = productId;
+    }
 
-//     public int getUserId() {
-//         return userId;
-//     }
+    public int getUserId() {
+        return userId;
+    }
 
-//     public void setUserId(int userId) {
-//         this.userId = userId;
-//     }
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
    
 
 
-// }
+}
