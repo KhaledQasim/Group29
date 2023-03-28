@@ -13,9 +13,14 @@ import com.team29.backend.config.CartService;
 import com.team29.backend.model.Product;
 import com.team29.backend.model.Size;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000/", "http://localhost:8080"}, allowCredentials = "true")
 @RequestMapping("/carts")
+@AllArgsConstructor
+@NoArgsConstructor
 public class CartController {
     
     @Autowired

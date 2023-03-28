@@ -10,27 +10,34 @@ import com.team29.backend.model.Cart;
 import com.team29.backend.model.Product;
 import com.team29.backend.repository.CartRepository;
 import com.team29.backend.repository.ProductRepository;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 @Service
+@RequiredArgsConstructor
 public class CartService {
     
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
 
-    public CartService(CartRepository cartRepository, ProductRepository productRepository) {
-        this.cartRepository = cartRepository;
-        this.productRepository = productRepository;
-    }
+    // public CartService(CartRepository cartRepository, ProductRepository productRepository) {
+    //     this.cartRepository = cartRepository;
+    //     this.productRepository = productRepository;
+    // }
     public List<Cart> getAllCarts() {
         return cartRepository.findAll();
     }
-    public Optional<Cart> getCartById(Long id) throws CartNotFoundException {
+    public Optional<Cart> getCartById(Long id) {
         Optional<Cart> cart = cartRepository.findById(id);
         if (!cart.isPresent()) {
             throw new CartNotFoundException(id);
         }
         return cart;
     }
-    public Cart createCart(Cart newCart) throws CartAlreadyExistsException {
+    public Cart createCart(Cart newCart)  {
         return cartRepository.save(newCart);
     }
     public Cart updateCart(Long cartId, Cart updatedCart) throws CartNotFoundException {

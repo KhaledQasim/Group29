@@ -12,6 +12,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Order {
     @Id
@@ -28,87 +37,9 @@ public class Order {
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
     private Set<OrderItem> orderItem = new HashSet<>() ;
 
-    //constructor
-    public Order(){
-        super();
-        
-    }
-    public Order(int orderId, String orderStatus, String paymentStatus, Date orderDelivered, double orderAmt,
-            String billingAddress, Date orderCreateAt, User user, Set<OrderItem> orderItem) {
-        this.orderId = orderId;
-        this.orderStatus = orderStatus;
-        this.paymentStatus = paymentStatus;
-        this.orderDelivered = orderDelivered;
-        this.orderAmt = orderAmt;
-        this.billingAddress = billingAddress;
-        this.orderCreateAt = orderCreateAt;
-        this.user = user;
-        this.orderItem = orderItem;
-    }
-    
-    //getters and setters below
-    
-    public int getOrderId() {
-        return orderId;
-    }
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
-    }
-    public String getOrderStatus() {
-        return orderStatus;
-    }
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-    public String getPaymentStatus() {
-        return paymentStatus;
-    }
-    public void setPaymentStatus(String paymentStatus) {
-        this.paymentStatus = paymentStatus;
-    }
-    public Date getOrderDelivered() {
-        return orderDelivered;
-    }
-    public void setOrderDelivered(Date orderDelivered) {
-        this.orderDelivered = orderDelivered;
-    }
-    public double getOrderAmt() {
-        return orderAmt;
-    }
-    public void setOrderAmt(double orderAmt) {
-        this.orderAmt = orderAmt;
-    }
-    public String getBillingAddress() {
-        return billingAddress;
-    }
-    public void setBillingAddress(String billingAddress) {
-        this.billingAddress = billingAddress;
-    }
-    public User getUser() {
-        return user;
-    }
-    public void setUser(User user) {
-        this.user = user;
-    }
-    public Set<OrderItem> getOrderItem() {
-        return orderItem;
-    }
-    public void setOrderItem(Set<OrderItem> orderItem) {
-        this.orderItem = orderItem;
-    }
 
 
-
-    public Date getOrderCreateAt() {
-        return orderCreateAt;
-    }
-
-
-
-    public void setOrderCreateAt(Date orderCreateAt) {
-        this.orderCreateAt = orderCreateAt;
-    }
-    
+  
     
     
 }
