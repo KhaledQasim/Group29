@@ -1,5 +1,7 @@
 package com.team29.backend.controller;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,11 +38,39 @@ public class ProductController {
         return productRepository.findAll();
     }
 
+    @GetMapping("/productsCategory/{category}")
+    ArrayList<Product> getProductByCategory(@PathVariable String category){
+        ArrayList<Product> Category = new ArrayList<>();
+        for (Product temp : productRepository.findAll()) {
+            if (temp.getCategory().equals(category)) {
+                Category.add(temp);
+
+            }
+        }
+        return Category;
+                
+    }
+
+    @GetMapping("/products/new")
+    ArrayList<Product> getProductNew(){
+        ArrayList<Product> New = new ArrayList<>();
+        LocalDate currentDate = LocalDate.now();
+        LocalDate currentDateMinus2Weeks = currentDate.minusDays(14);
+        for (Product temp : productRepository.findAll()) {
+            if (temp.getCreatedAt().isAfter(currentDateMinus2Weeks)){
+                New.add(temp);
+            }
+        }
+        return New;
+                
+    }
+
     @GetMapping("/product/{id}")
-    Product geProductById(@PathVariable Long id){
+    Product getProductById(@PathVariable Long id){
         return productRepository.findById(id)
                 .orElseThrow(()->new ProductNotFoundException(id));
     }
+    
 
     @PutMapping("/api/product/{id}")
     Product updateProduct(@RequestBody Product newProduct, @PathVariable Long id) {
