@@ -50,7 +50,7 @@ public class GeoIpLocationServiceController {
            
 
             for (User temp : userRepository.findAll()) {
-                if ( !  ((temp.getIp().equals("127.0.0.1")) || temp.getIp().equals("0:0:0:0:0:0:0:1"))  ) {
+                if (!(temp.getIp().equals("127.0.0.1"))) {
                     String ip = temp.getIp();
                     InetAddress ipAddress = InetAddress.getByName(ip);
 
