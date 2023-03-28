@@ -173,5 +173,5 @@ public class CartService {
         existingCart.getProducts().clear();
         cartRepository.save(existingCart);
     }
-    
+
 }
