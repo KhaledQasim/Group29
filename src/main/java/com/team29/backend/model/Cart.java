@@ -1,15 +1,17 @@
 package com.team29.backend.model;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.ManyToMany;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,29 +24,54 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Cart {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue
+    private Long cartid;
 
-    @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+
     private int quantity;
+
     private double totalPrice;
-    
-    @OneToMany(mappedBy = "cart")
-    private List<Product> products = new ArrayList<>();
+
+    @ManyToMany
+    private List<Product> products;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        updatedAt = createdAt;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Date();
+    }
 
     public void addProduct(Product product) {
-        Optional<Product> existingProduct = getProductById(product.getId());
-        if (existingProduct.isPresent()) {
-            existingProduct.get().setQuantity(existingProduct.get().getQuantity() + product.getQuantity());
-        } else {
-            product.setCart(this);
+        boolean found = false;
+        for (Product p : products) {
+            if (p.getId().equals(product.getId())) {
+                p.setQuantity(p.getQuantity() + product.getQuantity());
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
             products.add(product);
         }
     }
 
     public void removeProduct(Long productId) {
-        Optional<Product> existingProduct = getProductById(productId);
-        existingProduct.ifPresent(product -> products.remove(product));
+        for (int i = 0; i < products.size(); i++) {
+            if (products.get(i).getId().equals(productId)) {
+                products.remove(i);
+                break;
+            }
+        }
     }
 
     public int getProductCount() {
@@ -56,7 +83,6 @@ public class Cart {
     }
 
     public double getPrice() {
-        totalPrice = 0.0;
         for (Product product : products) {
             totalPrice += product.getPrice() * product.getQuantity() * quantity;
         }
@@ -68,7 +94,7 @@ public class Cart {
         if (currentCount > 0) {
             double factor = (double) count / currentCount;
             for (Product product : products) {
-                product.setQuantity((int) (product.getQuantity() * factor));
+                product.setQuantity((long) (product.getQuantity() * factor));
             }
         }
         this.quantity = count;
@@ -82,21 +108,6 @@ public class Cart {
                 product.setPrice(product.getPrice() * factor);
             }
         }
-        this.totalPrice = totalPrice;
+        this.totalPrice = totalPrice * this.quantity;
     }
-    
-    
-    
-    public int getQuantity() {
-        return quantity;
-    }
-    
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-    public Optional<Product> getProductById(Long productId) {
-        return products.stream().filter(product -> product.getId().equals(productId)).findFirst();
-    }
-    
 }
-

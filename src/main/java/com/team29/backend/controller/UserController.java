@@ -9,8 +9,7 @@ import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -70,24 +69,8 @@ public class UserController {
     List<User> getAllUsers() {
         return userRepository.findAll();
     }
-    @GetMapping("/api/user/number/get")
-    Integer getAllUsersAmount() {
-        return userRepository.findAll().size();
-    }
+
     
-    @GetMapping("/api/user/new")
-    Integer getUserNew(){
-        ArrayList<User> New = new ArrayList<>();
-        LocalDate currentDate = LocalDate.now();
-        LocalDate currentDateMinus1Month = currentDate.minusMonths(1);
-        for (User temp : userRepository.findAll()) {
-            if (temp.getCreatedAt().isAfter(currentDateMinus1Month)){
-                New.add(temp);
-            }
-        }
-        return New.size();
-                
-    }
   
     @PostMapping("/api/user/post")
     public void register( HttpServletRequest requestIp, @RequestBody RegisterRequest request) {
