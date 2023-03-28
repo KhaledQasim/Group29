@@ -43,7 +43,8 @@ public class CartController {
     }
 
     @PostMapping
-    public ResponseEntity<Cart> createCart(@RequestBody(required = true) Cart newCart) {
+    // public ResponseEntity<Cart> createCart(@RequestBody(required = true) Cart newCart) {
+    public ResponseEntity<Cart> createCart(@RequestBody Cart newCart) {
         if (newCart == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
