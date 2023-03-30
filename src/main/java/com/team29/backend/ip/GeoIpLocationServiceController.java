@@ -50,7 +50,7 @@ public class GeoIpLocationServiceController {
            
 
             for (User temp : userRepository.findAll()) {
-                if ( !  ((temp.getIp().equals("127.0.0.1")) || temp.getIp().equals("0:0:0:0:0:0:0:1"))  ) {
+                if (!(temp.getIp().equals("127.0.0.1"))) {
                     String ip = temp.getIp();
                     InetAddress ipAddress = InetAddress.getByName(ip);
 
@@ -78,7 +78,8 @@ public class GeoIpLocationServiceController {
         }
         catch (IOException | java.io.IOException | GeoIp2Exception e) {
             Map<String, Integer> duplicates = new HashMap<String, Integer>(); 
-          
+            
+            duplicates.put(e.getMessage(),0 );
             return duplicates;
         }
    

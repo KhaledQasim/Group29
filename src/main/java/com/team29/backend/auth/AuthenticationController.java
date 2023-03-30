@@ -149,7 +149,7 @@ public class AuthenticationController {
                 .header(HttpHeaders.SET_COOKIE, cookie.toString()).body("ok");
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationRequest request) {
         try {
             authenticationManager.authenticate(

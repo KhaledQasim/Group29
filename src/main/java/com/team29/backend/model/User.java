@@ -46,7 +46,7 @@ public class User implements UserDetails {
     @Column(updatable = false)
     @CreationTimestamp
     private LocalDate createdAt;
-   
+ 
 
     @Enumerated(EnumType.STRING)
     private Role role;

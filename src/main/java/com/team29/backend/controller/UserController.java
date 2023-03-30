@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.team29.backend.ip.RequestService;
 import com.team29.backend.auth.RegisterRequest;
@@ -58,6 +59,13 @@ public class UserController {
     @Autowired
     private RequestService requestService;
     private Role role;
+
+    @GetMapping("/api/user-id/{username}")
+    Long getUserId(@PathVariable String username) {
+        return userRepository.findByEmail(username).get().getId();
+        
+    }
+
 
 
     public static boolean patternMatches(String emailAddress, String regexPattern) {

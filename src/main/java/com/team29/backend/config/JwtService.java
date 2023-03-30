@@ -6,11 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.team29.backend.controller.UserController;
+import com.team29.backend.repository.UserRepository;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -22,8 +25,15 @@ import io.jsonwebtoken.security.Keys;
 
 @PropertySource(value = {"classpath:application.properties"})
 public class JwtService {
+   
+   
     @Value("${jwt.secret}")
     private String SECRET_KEY;
+    // @GetMapping("/product/{id}")
+    // Product getProductById(@PathVariable Long id){
+    //     return productRepository.findById(id)
+    //             .orElseThrow(()->new ProductNotFoundException(id));
+    // }
   
     
     public String extractUsername(String token) {
@@ -48,7 +58,7 @@ public class JwtService {
           .builder()
           .setClaims(extraClaims)
           .setSubject(userDetails.getUsername())
-          .claim("authorities" , userDetails.getAuthorities())
+          .claim("authorities" , userDetails.getAuthorities())          
           .setIssuedAt(new Date(System.currentTimeMillis()))
           .setExpiration(new Date(System.currentTimeMillis()+1000 * 60 * 60 * 24))  //makes the token valid for only 1000mili-seconds + 24 hours
           .signWith(getSignInKey(), SignatureAlgorithm.HS256)
