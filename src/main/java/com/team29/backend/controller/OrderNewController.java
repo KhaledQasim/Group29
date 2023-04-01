@@ -31,6 +31,10 @@ public class OrderNewController {
     @Autowired
     private OrderNewRepository orderNewRepository;
     
+    @GetMapping("/test")
+    String test(){
+        return "works yay!";
+    }
     
     @PostMapping("/loggedUser/OrderNew")
     OrderNew newOrder(@RequestBody OrderNew orderNew){
