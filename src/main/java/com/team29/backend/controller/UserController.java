@@ -1,42 +1,32 @@
 package com.team29.backend.controller;
 
 
+import com.team29.backend.auth.RegisterRequest;
+import com.team29.backend.config.JwtService;
+import com.team29.backend.exception.UserEmailWrongException;
+import com.team29.backend.exception.UserNotFoundE;
+import com.team29.backend.exception.UserRegistrationDetailsMissingException;
+import com.team29.backend.exception.UsernameTakenException;
+import com.team29.backend.exception.WrongPassE;
+import com.team29.backend.ip.RequestService;
+import com.team29.backend.model.Role;
+import com.team29.backend.model.User;
 import com.team29.backend.repository.UserRepository;
-
 import io.jsonwebtoken.ExpiredJwtException;
-
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import com.team29.backend.config.JwtService;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import com.team29.backend.ip.RequestService;
-import com.team29.backend.auth.RegisterRequest;
-import com.team29.backend.exception.UserEmailWrongException;
-import com.team29.backend.exception.UserNotFoundE;
-import com.team29.backend.exception.UserRegistrationDetailsMissingException;
-import com.team29.backend.exception.UsernameTakenException;
-import com.team29.backend.exception.WrongPassE;
-import com.team29.backend.model.Role;
-import com.team29.backend.model.User;
-
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,6 +35,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+
+
+
+
+
+
 
 
 @RequiredArgsConstructor
@@ -89,7 +87,7 @@ public class UserController {
         LocalDate currentDate = LocalDate.now();
         LocalDate currentDateMinus1Month = currentDate.minusMonths(1);
         for (User temp : userRepository.findAll()) {
-            if (temp.getCreatedAt().isAfter(currentDateMinus1Month)){
+            if (temp.getCreatedAt().getMonth().equals(currentDate.getMonth())  && temp.getCreatedAt().getYear() == currentDate.getYear()){
                 New.add(temp);
             }
         }

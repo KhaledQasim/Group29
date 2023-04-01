@@ -1,10 +1,5 @@
 package com.team29.backend.model;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import org.hibernate.annotations.CreationTimestamp;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,13 +7,14 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+
 
 @Data
 @Builder
@@ -43,6 +39,7 @@ public class OrderNew {
     @Column(name="products", length=512)
     private String products;
     private Long userId;
+    private Integer totalPrice;
     // @ManyToOne
     // @JoinColumn(name = "user_id",nullable = false)
     // private User user;

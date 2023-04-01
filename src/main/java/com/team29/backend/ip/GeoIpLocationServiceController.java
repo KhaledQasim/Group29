@@ -1,31 +1,26 @@
 package com.team29.backend.ip;
 
+import com.maxmind.geoip2.DatabaseReader;
+import com.maxmind.geoip2.exception.GeoIp2Exception;
+import com.maxmind.geoip2.model.CountryResponse;
+import com.maxmind.geoip2.record.Country;
+import com.team29.backend.model.User;
+import com.team29.backend.repository.UserRepository;
+import io.jsonwebtoken.io.IOException;
 import java.io.File;
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.maxmind.geoip2.DatabaseReader;
-import com.maxmind.geoip2.exception.GeoIp2Exception;
-import com.maxmind.geoip2.model.CityResponse;
-import com.maxmind.geoip2.model.CountryResponse;
-import com.maxmind.geoip2.record.Country;
-import com.team29.backend.repository.ProductRepository;
-import com.team29.backend.repository.UserRepository;
 
-import io.jsonwebtoken.io.IOException;
-import lombok.RequiredArgsConstructor;
-import com.team29.backend.model.Product;
-import com.team29.backend.model.User;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -50,7 +45,7 @@ public class GeoIpLocationServiceController {
            
 
             for (User temp : userRepository.findAll()) {
-                if (!(temp.getIp().equals("127.0.0.1"))) {
+                if (!(temp.getIp().equals("127.0.0.1") || temp.getIp().equals("0:0:0:0:0:0:0:1"))) {
                     String ip = temp.getIp();
                     InetAddress ipAddress = InetAddress.getByName(ip);
 
