@@ -17,6 +17,9 @@ for authorization as it identifies whether the user has ADMIN or USER roles and 
 
 For example only ADMIN role accounts can access the admin dashboard and get inventory managemt notification.
 
+Admin Page:
+![alt text](https://github.com/KhaledQasim/Team29Backend/blob/main/ReadMeImages/Admin.png?raw=true)
+
 # Set-Up
 
 The project is already online 24/7 so all that is needed is to run frontend react app
@@ -25,4 +28,4 @@ The project is already online 24/7 so all that is needed is to run frontend reac
 https://github.com/KhaledQasim/team29frontend/
 ```
 
-![alt text](https://github.com/KhaledQasim/Team29Backend/blob/main/ReadMeImages/Admin.png?raw=true)
+
