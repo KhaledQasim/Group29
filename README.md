@@ -25,7 +25,7 @@ Admin Page:
 The project is already online 24/7 so all that is needed is to run frontend react app
 
 ```
-https://github.com/KhaledQasim/team29frontend/
+[Link text Here](https://github.com/KhaledQasim/team29frontend/)
 ```
 
 
